@@ -1,36 +1,49 @@
 package com.trello.qa;
 
-import com.sun.org.apache.xalan.internal.xsltc.dom.CurrentNodeListFilter;
 import org.openqa.selenium.By;
-import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class BoardCreationTest extends TestBase {
 
-@Test
-        public void  createBoard(){
-            testBoardCreation("myfirst");
-            openSite("trello.com");
+    @Test
+        public void  createBoard() throws InterruptedException {
+        int before = getBoardsCount();
+        String nameBoard = "Frida";
+        testBoardCreation(nameBoard);
+        String createdBoardName = getBoardNameFromBoardPage();
+        returnToHomePage();
+        int after = getBoardsCount();
+        Assert.assertEquals(before, after-1);
+        Assert.assertEquals(nameBoard, createdBoardName);
 
-             Assert.assertTrue(isBoardPresented());
         }
 
-        public void testBoardCreation(String name){
+
+    public String getBoardNameFromBoardPage() throws InterruptedException {
+        Thread.sleep(3000);
+        return driver.findElement(By.cssSelector("[class='js-board-editing-target board-header-btn-text']")).getText();
+
+    }
+
+    public void testBoardCreation(String name)  {
             click(By.cssSelector("[class='board-tile mod-add']"));
             type(By.cssSelector("[class='subtle-input']"), name);
             click(By.cssSelector("[class= 'primary']"));
-            //new Actions(driver).moveToElement(driver.findElement(By.name("name"))).click().perform();
-            //click(By.name("house"));
-}
+        }
 
-public boolean isBoardPresented(){
-    click(By.xpath("//*[@id='header']/div[1]/a"));
-    return driver.findElements(By.xpath("//*[@id='header']/div[1]/a")).size()>0;
-    //оно не работает!!)))
-}
-public void openSite(String url){
+    public void openSite(String url){
     driver.get(url);
 }
+
+    public int getBoardsCount() {
+      return driver.findElements(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li")).size();
+    }
+
+    public int getAfter()
+    {
+        driver.findElements(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li"));
+        return getAfter()-1;
+    }
 }
 
