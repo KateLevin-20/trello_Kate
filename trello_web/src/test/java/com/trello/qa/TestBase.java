@@ -2,11 +2,13 @@ package com.trello.qa;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +24,14 @@ public class TestBase {
 
         openSite("https://trello.com"); //Alt enter for method creation
         login("mariposamilagrosa21@gmail.com", "20031990kate");
+    }
+
+    @BeforeMethod
+    public void isOnHomePage(){
+        if(!isTherePersonalBoards())
+        {
+            returnToHomePage();
+        }
     }
 
     public void login(String email, String password) {
@@ -41,6 +51,19 @@ public class TestBase {
         driver.findElement(locator).sendKeys(text);
 
     }
+
+    public String getBoardNameFromBoardPage(){
+        new WebDriverWait(driver, 5)
+                .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("[class='js-board-editing-target board-header-btn-text']")));
+        return driver.findElement(By.cssSelector("[class='js-board-editing-target board-header-btn-text']")).getText();
+
+    }
+
+    public void testBoardCreation(String name)  {
+            click(By.cssSelector("[class='board-tile mod-add']"));
+            type(By.cssSelector("[class='subtle-input']"), name);
+            click(By.cssSelector("[class= 'primary']"));
+        }
 
     public void openSite(String url) {
         driver.get(url);
@@ -70,7 +93,8 @@ public class TestBase {
     }
 
     protected String getTeamNameFromTeamPage() {
-        new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("h1")));
+        new WebDriverWait(driver, 15)
+                .until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("h1")));
         return driver.findElement(By.cssSelector("h1")).getText();
     }
 
@@ -100,6 +124,8 @@ public class TestBase {
     }
 
     public int getBoardsCount() {
+        new WebDriverWait(driver, 15)
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li")));
       return driver.findElements(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li")).size();
     }
 
@@ -123,5 +149,47 @@ public class TestBase {
 
     public void clickOnFirstTeam() {
         click(By.xpath("By.xpath(\"//*[@class='_mtkwfAlvk6O3f']/../../..//li\""));
+    }
+
+
+
+    public boolean isTherePersonalBoards() {
+        return isElementPresent(By.xpath("//*[@class='icon-lg icon-member']/../../.."));
+    }
+
+    public void clickPermanentlyDeleteBoard() {
+        click(By.cssSelector("[class='quiet js-delete']"));
+    }
+
+    public void clickConfirmDeletion() {
+        click(By.cssSelector("[class='js-confirm full negate']"));
+    }
+
+    public void clickCloseBoardButton() {
+        click(By.cssSelector("[class='board-menu-navigation-item-link js-close-board']"));
+    }
+
+    public void clickMoreButton() {
+        WebElement menuButton = driver.findElement(By.cssSelector(".js-show-sidebar"));
+
+        if (menuButton.getCssValue("visibility").equals("visible"))
+            click(By.cssSelector(".js-show-sidebar"));
+
+        click(By.cssSelector(".js-open-more"));
+    }
+
+    public void clickOnFirstBoard() {
+        click(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li"));
+    }
+
+    public void deleteFirstBoard() {
+        clickOnFirstBoard();
+
+        clickMoreButton();
+        clickCloseBoardButton();
+        clickConfirmDeletion();
+        clickPermanentlyDeleteBoard();
+        clickConfirmDeletion();
+        returnToHomePage();
     }
 }

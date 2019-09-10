@@ -17,18 +17,6 @@ public class TeamCreationTests extends TestBase {
      }
  }
 
-        @BeforeMethod
-        public void isOnHomePage(){
-        if(!isTherePersonalBoards())
-        {
-            returnToHomePage();
-        }
-        }
-
-    public boolean isTherePersonalBoards() {
-        return isElementPresent(By.xpath("//*[@class='icon-lg icon-member']/../../.."));
-    }
-
     @Test
         public void testTeamCreationFromPlusButtonOnHeader()  {
             int before = getTeamsCount();
