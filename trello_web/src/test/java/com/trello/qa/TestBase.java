@@ -3,6 +3,8 @@ package com.trello.qa;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
@@ -19,8 +21,7 @@ public class TestBase {
         driver.manage().window().maximize(); // для полноэкранного режима
 
         openSite("https://trello.com"); //Alt enter for method creation
-        login("\n" +
-                "mariposamilagrosa21@gmail.com", "20031990kate");
+        login("mariposamilagrosa21@gmail.com", "20031990kate");
     }
 
     public void login(String email, String password) {
@@ -50,10 +51,77 @@ public class TestBase {
         driver.quit();
     }
 
-    public void returnToHomePage() throws InterruptedException {
-        Thread.sleep(3000);
-        click(By.cssSelector("[href='/']"));
-        click(By.cssSelector("[href='/']"));
+    public void returnToHomePage() {
+        if(isElementPresent(By.cssSelector("._3gUubwRZDWaOF0._2WhIqhRFBTG7Ry._2NubQcQM83YCVV"))){
+            new WebDriverWait(driver, 15)
+                 .until(ExpectedConditions
+                 .stalenessOf(driver.findElement(By.cssSelector("._3gUubwRZDWaOF0._2WhIqhRFBTG7Ry._2NubQcQM83YCVV"))));
+            click(By.cssSelector("a[href='/']")); //stalenessOf - ждать, пока элемент исчезнет
+            click(By.cssSelector("a[href='/']"));
+        } else
+            click(By.cssSelector("a[href='/']"));
     }
 
+
+    public int getTeamsCount() {
+            new WebDriverWait(driver, 5)  //wait проверяет каждый 500милискунд, есть ли элемент, это селениум
+                    .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@class='_mtkwfAlvk6O3f']/../../..//li")));
+        return driver.findElements(By.xpath("//*[@class='_mtkwfAlvk6O3f']/../../..//li")).size();
+    }
+
+    protected String getTeamNameFromTeamPage() {
+        new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("h1")));
+        return driver.findElement(By.cssSelector("h1")).getText();
+    }
+
+    public void fillTeamCreationForm(String teamName, String description) {
+        type(By.cssSelector("[data-test-id='header-create-team-name-input']"), teamName);
+        type(By.cssSelector("textarea"), description);
+    }
+
+    public void selectCreateTeamFromDropDown() {
+        click(By.cssSelector("[data-test-id='header-create-team-button']"));
+    }
+
+    public void clickOnPlusButtonOnHeader() {
+        click(By.cssSelector("[data-test-id='header-create-menu-button']"));
+    }
+
+    public void clickContinueButton() {
+        click(By.cssSelector("[type=submit]"));
+    }
+
+    public boolean isUserLoggedIn() {
+        return isElementPresent(By.cssSelector("[data-test-id='header-member-menu-button']"));
+    }
+
+    public boolean isElementPresent(By locator){
+        return driver.findElements(locator).size()>0;
+    }
+
+    public int getBoardsCount() {
+      return driver.findElements(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li")).size();
+    }
+
+    public int getAfter()
+    {
+        driver.findElements(By.xpath("//*[@class=\"icon-lg icon-member\"]/../../..//li"));
+        return getAfter()-1;
+    }
+
+    public void deleteTeam() {
+
+        new WebDriverWait(driver,10)
+                .until(ExpectedConditions.elementToBeClickable(By.cssSelector(".quiet-button")));
+        click(By.cssSelector(".quiet-button"));
+        click(By.cssSelector(".js-confirm.full.negate"));
+    }
+
+    public void openSettings() {
+        click(By.cssSelector("[class='icon-gear icon-sm OiX3P2i2J92Xat']"));
+    }
+
+    public void clickOnFirstTeam() {
+        click(By.xpath("By.xpath(\"//*[@class='_mtkwfAlvk6O3f']/../../..//li\""));
+    }
 }
