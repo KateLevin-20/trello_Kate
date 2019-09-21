@@ -1,4 +1,4 @@
-package com.trello.qa;
+package com.trello.qa.tests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -6,15 +6,15 @@ import org.testng.annotations.Test;
 public class BoardDeletionTest extends TestBase {
     @BeforeMethod
     public void isThereBoard(){
-        if(getBoardsCount()==0)
-            testBoardCreation("like");
+        if(app.getBoardHelper().getBoardsCount()==0)
+            app.getBoardHelper().testBoardCreation("like");
     }
     @Test
     public void deleteBoardFromLeftNavMenu() {
-        int before = getBoardsCount();
-        deleteFirstBoard();
+        int before = app.getBoardHelper().getBoardsCount();
+        app.getBoardHelper().deleteFirstBoard();
 
-        int after = getBoardsCount();
+        int after = app.getBoardHelper().getBoardsCount();
         Assert.assertEquals(after, before - 1);
     }
 
