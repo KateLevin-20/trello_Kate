@@ -1,9 +1,17 @@
 package com.trello.qa.tests;
 
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class TeamModificationTest extends TestBase {
+
+    @BeforeMethod
+    public void precondition(){
+        if(!app.getTeamHelper().isTeamPresent()){
+            app.getTeamHelper().createTeam();
+        }
+    }
 
     @Test
     public void testRenameTeam() throws InterruptedException {

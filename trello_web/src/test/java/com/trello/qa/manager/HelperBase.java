@@ -15,16 +15,20 @@ public class HelperBase {
 
     public void openSite(String url){ driver.get(url); }
 
-    public void click(By locator) {
-        driver.findElement(locator).click();
-    }
+   public void click(By locator) {driver.findElement(locator).click();
+}
 
     public void type(By locator, String text) {
-        driver.findElement(locator).click();
-        driver.findElement(locator).clear();
-        driver.findElement(locator).sendKeys(text);
 
+        if (text != null) {
+            driver.findElement(locator).click();
+            driver.findElement(locator).clear();
+            driver.findElement(locator).sendKeys(text);
+
+        }
     }
+
+
     public boolean isElementPresent(By locator){
         return driver.findElements(locator).size()>0;
     }

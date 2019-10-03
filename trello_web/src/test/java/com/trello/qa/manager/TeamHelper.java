@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
 
 public class TeamHelper extends HelperBase {
 
@@ -22,9 +23,9 @@ public class TeamHelper extends HelperBase {
         return driver.findElements(By.xpath("//*[@class='_mtkwfAlvk6O3f']/../../..//li")).size();
     }
 
-    public void fillTeamCreationForm(String teamName, String description) {
-        type(By.cssSelector("[data-test-id='header-create-team-name-input']"), teamName);
-        type(By.cssSelector("textarea"), description);
+    public void fillTeamCreationForm(TeamData team) {
+        type(By.cssSelector("[data-test-id='header-create-team-name-input']"), team.getTeamName());
+        type(By.cssSelector("textarea"), team.getDescription());
     }
 
     public void selectCreateTeamFromDropDown() {
@@ -64,6 +65,12 @@ public class TeamHelper extends HelperBase {
         //waitForElementAndClick(By.cssSelector("li .icon-gear.icon-sm.OiX3P2i2J92Xat"), 30);
     }
 
+   @AfterClass
+   public void decreaseTeamsAmount()
+    {
+        while(getTeamsCount()>3)
+            deleteTeam();
+    }
 
     public void initEditTeamProfile() {
         click(By.cssSelector(".js-edit-profile"));
@@ -77,5 +84,20 @@ public class TeamHelper extends HelperBase {
 
     public void confirmEditTaem() {
         click(By.cssSelector(".js-submit-profile"));
+    }
+
+    public boolean isTeamPresent() {
+        return getTeamsCount()>0;
+    }
+
+    public void createTeam() {
+        clickOnPlusButtonOnHeader();
+        selectCreateTeamFromDropDown();
+
+        fillTeamCreationForm(new TeamData()
+                .withTeamName("service")
+                .withDescription("lalalal"));
+        clickContinueButton();
+        returnToHomePage();
     }
 }

@@ -1,26 +1,25 @@
 package com.trello.qa.tests;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
+import com.trello.qa.model.BoardData;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.swing.*;
-
 public class BoardModificationTest extends TestBase {
+
+    @BeforeMethod
+    public void preconditions(){
+        if(!app.getBoardHelper().isTherePersonalBoards()){
+            app.getBoardHelper().boardCreation(new BoardData().setBoardName("board1"));
+        }
+    }
 
     @Test
     public void renameBoard(){
      app.getBoardHelper().clickOnFirstBoard();
-     app.getBoardHelper().clickOnBoardNameInTheLeftCorner();
-
-    //    new Actions((WebDriver) app).moveToElement(((WebDriver) app).
-    //            findElement(By.cssSelector("[class='js-board-editing-target board-header-btn-text']"))).click().perform();
-    //    ((WebDriver) app).findElement(By.cssSelector("[class='js-board-editing-target board-header-btn-text']")).click();
-
-
-     app.getBoardHelper().changeBoardName("hello");
-     app.getBoardHelper().returnToHomePage();
+     String newName = "April";
+    app.getBoardHelper().changeBoardName(new BoardData().setBoardName(newName));
+        Assert.assertTrue(app.getBoardHelper().findBoardByName(newName));
 
     }
 }
